@@ -1,0 +1,1 @@
+INSERT INTO TRIP(Id, Name) VALUES (1,'Latvija');
