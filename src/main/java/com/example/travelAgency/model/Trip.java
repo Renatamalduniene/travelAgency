@@ -1,31 +1,80 @@
 package com.example.travelAgency.model;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long tripId;
+    private Long userId;
+    private String tripName;
+    private String tripPrice;
+    private Date tripDate;
 
-    private String name;
+    public Trip() {
 
-    public Long getId() {
-        return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Trip(Long tripId, Long userId, String tripName, String tripPrice, Date tripDate) {
+        this.tripId = tripId;
+        this.userId = userId;
+        this.tripName = tripName;
+        this.tripPrice = tripPrice;
+        this.tripDate = tripDate;
     }
 
-    public String getName() {
-        return name;
+    public Long getTripId() {
+        return tripId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTripId(Long tripId) {
+        this.tripId = tripId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getTripName() {
+        return tripName;
+    }
+
+    public void setTripName(String tripName) {
+        this.tripName = tripName;
+    }
+
+    public String getTripPrice() {
+        return tripPrice;
+    }
+
+    public void setTripPrice(String tripPrice) {
+        this.tripPrice = tripPrice;
+    }
+
+    public Date getTripDate() {
+        return tripDate;
+    }
+
+    public void setTripDate(Date tripDate) {
+        this.tripDate = tripDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "tripId=" + tripId +
+                ", userId=" + userId +
+                ", tripName='" + tripName + '\'' +
+                ", tripPrice='" + tripPrice + '\'' +
+                ", tripDate=" + tripDate +
+                '}';
     }
 }
+
+
+

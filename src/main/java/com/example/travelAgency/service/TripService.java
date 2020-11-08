@@ -15,7 +15,16 @@ public class TripService {
     public TripService(TripRepository tripRepository) {
         this.tripRepository = tripRepository;
     }
-    public List<Trip> getAllTrips() {
-        return (List<Trip>) tripRepository.findAll();
+    public List<Trip> getAllTrip() {
+        return tripRepository.findAll();
+    }
+
+    public void addTrip(Trip trip) {
+        tripRepository.save(trip);
+    }
+
+    public void delete(Trip trip) {
+    }
+    public void saveTrip(Trip trip) {
     }
 }
