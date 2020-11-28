@@ -3,47 +3,59 @@ import com.example.travelAgency.model.User;
 import com.example.travelAgency.repository.UserRepository;
 import com.example.travelAgency.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
-    @GetMapping("/users")
-    public List<User> getAllUsers(Model model) {
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
-        return users;
-    }
     @GetMapping("/")
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public String showInitialScreen(Model model) {
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+        return "index";
     }
+
+    @GetMapping("/signup")
+    public String showSignUpForm(User user) {
+        return "user-add"; //html failo pavadinimas
+    }
+
     @PostMapping("/adduser")
-    public String addUser(@RequestBody User user, Model model) {
+    public String addUser(User user, BindingResult result, Model model) {
         userRepository.save(user);
         model.addAttribute("users", userRepository.findAll());
-        return "user added";
+        return "user-add";
     }
-    @DeleteMapping("/deleteuser")
-    public String deleteUser(@RequestBody User user) {
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") long id, Model model) {
+        User user = userRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("Invalid user id: " + id));
+
         userRepository.delete(user);
-        return "user deleted";
+        model.addAttribute("users", userRepository.findAll());
+        return "index";
     }
-    @PutMapping ("/edituser")
-    public String editUser(@RequestBody User user) {
-        userService.saveUser(user);
-        return "user edited";
+
+   /* @GetMapping("/edit/{id}")
+    public String showUpdateForm(@PathVariable("id") long id, Model model) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
+        model.addAttribute("user", user);
+        return "user-edit";
+    }*/
+
+    @PostMapping("/update/{id}")
+    public String updateUser(@PathVariable("id") long id, Model model, User user, BindingResult result) {
+        userRepository.save(user);
+        model.addAttribute("users", userRepository.findAll());
+        return "index";
     }
 }
-
-
-

@@ -1,43 +1,63 @@
 package com.example.travelAgency.controllers;
 
 import com.example.travelAgency.model.Trip;
-import com.example.travelAgency.service.TripService;
+import com.example.travelAgency.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/trip")
+@Controller
 public class TripController {
 
     @Autowired
-    private TripService tripService;
+    private TripRepository tripRepository;
 
-    @GetMapping("/trips")
-    public List<Trip> getTrips(Model model) {
-        List<Trip> trips = tripService.getAllTrip();
-        model.addAttribute("trip", trips);
-        return trips;
+    @GetMapping("/")
+    public String showInitialScreen(Model model) {
+        List<Trip> trips = tripRepository.findAll();
+        model.addAttribute("trips", trips);
+        return "trips";
     }
 
-    @PostMapping("/addtrip")
-    public String addTrip(@RequestBody Trip trip) {
-        tripService.addTrip(trip);
-        return "trip added";
+    @GetMapping("/addtripview")
+    public String addTripView(Model model) {
+        Trip trip = new Trip();
+        model.addAttribute("trip", trip);
+        return"addtrip";
     }
 
-    @DeleteMapping("/deletetrip")
-    public String deleteTrip(@RequestBody Trip trip) {
-        tripService.delete(trip);
-        return "trip deleted";
+    @GetMapping("/addtrip")
+    public String addTrip(Trip trips, BindingResult result, Model model){
+         tripRepository.save(trips);
+         model.addAttribute("trips", tripRepository.findAll());
+         return "/";
     }
 
-    @PutMapping("/edittrip")
-    public String editTrip(@RequestBody Trip trip) {
-        tripService.saveTrip(trip);
-        return "trip edited";
-        //tripService.getAllTrip();
+    @GetMapping("/delete/{id}")
+    public String deleteTrip(@PathVariable("id") long id, Model model) {
+        Trip trip = tripRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("Invalid trip id: " + id));
+
+        tripRepository.delete(trip);
+        model.addAttribute("trips", tripRepository.findAll());
+        return "trips";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showUpdateForm(@PathVariable("id") long id, Model model) {
+        Trip trip = tripRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        model.addAttribute("trips", trip);
+        return "trip-edit";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateTrip(@PathVariable("id") long id, Model model, Trip trip, BindingResult result) {
+        tripRepository.save(trip);
+        model.addAttribute("trips", tripRepository.findAll());
+        return "trips";
     }
 }
